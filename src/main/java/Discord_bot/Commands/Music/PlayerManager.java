@@ -132,6 +132,12 @@ public class PlayerManager {
         musicManager.scheduler.stopTrack();
     }
 
+    //Clear Queue
+    public void clearQueue(TextChannel channel) {
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.clearQueue();
+    }
+
     public static PlayerManager getInstance(GuildMessageReceivedEvent event) throws Exception{
 
         if(INSTANCE == null){
@@ -140,4 +146,6 @@ public class PlayerManager {
 
         return INSTANCE;
     }
+
+
 }

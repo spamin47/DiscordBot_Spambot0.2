@@ -53,6 +53,11 @@ public class TrackScheduler extends AudioEventAdapter{
         this.player.startTrack(track,false);
     }
 
+    //clear queue
+    public void clearQueue(){
+        queue.clear();
+    }
+
     public void test(){
 
     }

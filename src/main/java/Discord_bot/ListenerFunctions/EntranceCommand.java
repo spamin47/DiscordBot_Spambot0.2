@@ -33,25 +33,11 @@ public class EntranceCommand implements IListener {
             audioManager.openAudioConnection(memberChannel); //join channel
         }
 
-        Thread t1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try{
-                    PlayerManager.getInstance(CommandListener.event).loadAndPlay2(event.getChannelJoined(),"https://youtu.be/ryDk5r-nNjY");
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
-        t1.start();
-            synchronized (audioManager){
-                try{
-                    audioManager.wait(5000);
-                    audioManager.closeAudioConnection();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-    }
+        try{
+            PlayerManager.getInstance(CommandListener.event).loadAndPlay2(event.getChannelJoined(),"https://youtu.be/ryDk5r-nNjY");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
 
     }

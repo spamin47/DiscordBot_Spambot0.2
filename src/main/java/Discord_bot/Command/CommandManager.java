@@ -23,6 +23,7 @@ public class CommandManager {
         commands.add(new UnpauseCommand());
         commands.add(new StopCommand());
         commands.add(new DisconnectCommand());
+        commands.add(new ClearCommand());
     }
 
     public void handle(GuildMessageReceivedEvent event, String prefix){
