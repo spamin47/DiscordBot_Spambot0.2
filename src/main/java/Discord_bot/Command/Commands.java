@@ -21,14 +21,17 @@ public class Commands extends ListenerAdapter{
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) //Guild - discord server
     {
         String[] args = event.getMessage().getContentRaw().split(" ");
-
-        System.out.println("\nRaw Content: \n" + event.getMessage());
-        System.out.println("Command input:");
-        int size = args.length;
-        for(int i = 0;i<size;i++){
-            System.out.print(args[i] + " ");
-        }
-        System.out.println("");
+//
+//        System.out.println("User: " + event.getMember());
+//        System.out.println("User Effective name: " + event.getMember().getEffectiveName());
+//        System.out.println("User id: " + event.getMember().getId());
+//        System.out.println("\nRaw Content: \n" + event.getMessage());
+//        System.out.println("input:");
+//        int size = args.length;
+//        for(int i = 0;i<size;i++){
+//            System.out.print(args[i] + " ");
+//        }
+//        System.out.println("");
 
         //basic commmand
         if(args[0].equalsIgnoreCase(prefix + "hii")) {

@@ -33,7 +33,7 @@ public class PauseCommand implements Command {
             return;
         }
         try{
-            PlayerManager.getInstance().pauseMusic(textChannel);
+            PlayerManager.getInstance(event).pauseMusic(textChannel);
 
         }catch(Exception e){
             e.printStackTrace();

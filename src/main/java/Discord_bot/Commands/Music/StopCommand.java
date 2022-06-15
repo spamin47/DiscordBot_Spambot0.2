@@ -33,7 +33,7 @@ public class StopCommand implements Command {
             return;
         }
         try{
-            PlayerManager.getInstance().stopMusic(textChannel);
+            PlayerManager.getInstance(event).stopMusic(textChannel);
 
         }catch(Exception e){
             e.printStackTrace();

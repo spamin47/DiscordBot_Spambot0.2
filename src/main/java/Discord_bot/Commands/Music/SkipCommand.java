@@ -33,7 +33,7 @@ public class SkipCommand implements Command {
             return;
         }
         try{
-            PlayerManager.getInstance().skipMusic(textChannel);
+            PlayerManager.getInstance(event).skipMusic(textChannel);
 
         }catch(Exception e){
             e.printStackTrace();

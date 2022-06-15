@@ -33,7 +33,7 @@ public class UnpauseCommand implements Command {
             return;
         }
         try{
-             PlayerManager.getInstance().unpauseMusic(textChannel);
+             PlayerManager.getInstance(event).unpauseMusic(textChannel);
 
         }catch(Exception e){
             e.printStackTrace();

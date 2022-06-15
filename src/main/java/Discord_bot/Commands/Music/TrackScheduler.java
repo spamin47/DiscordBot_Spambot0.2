@@ -3,6 +3,8 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.managers.AudioManager;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,9 +13,10 @@ public class TrackScheduler extends AudioEventAdapter{
 
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue; //queue for tracks
+    private final GuildMessageReceivedEvent event;
 
-
-    public TrackScheduler(AudioPlayer player){
+    public TrackScheduler(AudioPlayer player, GuildMessageReceivedEvent event){
+        this.event = event;
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
     }
@@ -45,6 +48,11 @@ public class TrackScheduler extends AudioEventAdapter{
         this.player.stopTrack();
     }
 
+    //force play track
+    public void playTrack(AudioTrack track){
+        this.player.startTrack(track,false);
+    }
+
     public void test(){
 
     }
@@ -52,8 +60,15 @@ public class TrackScheduler extends AudioEventAdapter{
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         if(endReason.mayStartNext){
+            System.out.println("Next Track: " + track.getInfo().title);
             nextTrack();
         }
+        if(queue.isEmpty()){
+            System.out.println("Disconnecting...");
+            AudioManager audioManager = event.getGuild().getAudioManager();
+            audioManager.closeAudioConnection();
+        }
+
     }
 
 }

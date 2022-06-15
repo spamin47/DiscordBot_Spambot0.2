@@ -47,7 +47,7 @@ public class PlayCommand implements Command {
         try{
             System.out.println("link: " + commandArgs[1]);
 
-            PlayerManager.getInstance().loadAndPlay(textChannel,commandArgs[1]);
+            PlayerManager.getInstance(event).loadAndPlay(textChannel,commandArgs[1]);
             //PlayerManager.getInstance().
         }catch(Exception e){
             e.printStackTrace();

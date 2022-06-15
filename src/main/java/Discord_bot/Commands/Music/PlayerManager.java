@@ -10,6 +10,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +21,11 @@ public class PlayerManager {
 
     private final Map<Long, GuildMusicManager> musicManagers;
     private AudioPlayerManager audioPlayerManager = null;
+    private GuildMessageReceivedEvent event;
 
-    public PlayerManager() throws Exception{
+    public PlayerManager(GuildMessageReceivedEvent event) throws Exception{
         this.musicManagers = new HashMap<>();
-
+        this.event = event;
         try{
             System.out.println("Creating audioPlayerManager...");
             this.audioPlayerManager = new DefaultAudioPlayerManager();
@@ -39,7 +42,7 @@ public class PlayerManager {
     public GuildMusicManager getMusicManager(Guild guild){
         return this.musicManagers.computeIfAbsent(guild.getIdLong(), (guildId) -> {
 
-           final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager);
+           final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager,event);
 
            guild.getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
             return guildMusicManager;
@@ -53,12 +56,12 @@ public class PlayerManager {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.scheduler.queue(track);
-
                 channel.sendMessage("Adding track to queue: ")
                         .append(track.getInfo().title)
                         .append("' by '")
                         .append(track.getInfo().author)
                         .queue();
+
             }
 
             @Override
@@ -77,6 +80,33 @@ public class PlayerManager {
             }
         });
     }
+
+    public void loadAndPlay2(VoiceChannel channel, String trackUrl){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+
+        this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+                musicManager.scheduler.playTrack(track);
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+
+            }
+
+            @Override
+            public void noMatches() {
+
+            }
+
+            @Override
+            public void loadFailed(FriendlyException exception) {
+
+            }
+        });
+    }
+
 
     //pause track
     public void pauseMusic(TextChannel channel){
@@ -102,10 +132,10 @@ public class PlayerManager {
         musicManager.scheduler.stopTrack();
     }
 
-    public static PlayerManager getInstance() throws Exception{
+    public static PlayerManager getInstance(GuildMessageReceivedEvent event) throws Exception{
 
         if(INSTANCE == null){
-            INSTANCE = new PlayerManager();
+            INSTANCE = new PlayerManager(event);
         }
 
         return INSTANCE;
