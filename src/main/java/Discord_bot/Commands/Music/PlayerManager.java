@@ -48,6 +48,7 @@ public class PlayerManager {
 
     public void loadAndPlay(TextChannel channel, String trackUrl){
         final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -75,6 +76,30 @@ public class PlayerManager {
 
             }
         });
+    }
+
+    //pause track
+    public void pauseMusic(TextChannel channel){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.pauseTrack();
+    }
+
+    //unpause track
+    public void unpauseMusic(TextChannel channel){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.unpauseTrack();
+    }
+
+    //skip track
+    public void skipMusic(TextChannel channel){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.nextTrack();
+    }
+
+    //stop track
+    public void stopMusic(TextChannel channel){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.stopTrack();
     }
 
     public static PlayerManager getInstance() throws Exception{

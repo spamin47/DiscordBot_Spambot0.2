@@ -23,7 +23,13 @@ public class Commands extends ListenerAdapter{
         String[] args = event.getMessage().getContentRaw().split(" ");
 
         System.out.println("\nRaw Content: \n" + event.getMessage());
-        System.out.println("Command input: \n" + args[0]);
+        System.out.println("Command input:");
+        int size = args.length;
+        for(int i = 0;i<size;i++){
+            System.out.print(args[i] + " ");
+        }
+        System.out.println("");
+
         //basic commmand
         if(args[0].equalsIgnoreCase(prefix + "hii")) {
             System.out.println(args[0]);//

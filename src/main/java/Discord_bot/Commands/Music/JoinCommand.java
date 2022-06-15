@@ -18,7 +18,8 @@ public class JoinCommand implements Command {
 
     @Override
     public void handle(GuildMessageReceivedEvent event, String[] commandArgs) {
-        System.out.println("handling JoinCommand...");
+        System.out.println("Handling " + getName() + " command...");
+
         final TextChannel channel = event.getChannel();
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();

@@ -11,7 +11,8 @@ public class GreetingCommand implements Command {
 
     @Override
     public void handle(GuildMessageReceivedEvent event, String[] commandArgs) {
-        System.out.println("handling Greeting Command...");
+        System.out.println("Handling " + getName() + " command...");
+
         event.getChannel().sendMessage("Hi! " + event.getMember().getAsMention()).queue();
     }
 }
