@@ -3,6 +3,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
@@ -30,7 +31,10 @@ public class TrackScheduler extends AudioEventAdapter{
 
     //goto next track
     public void nextTrack(){
-        this.player.startTrack(this.queue.poll(),false);
+        AudioTrack track = this.queue.poll();
+        AudioTrackInfo trackInfo = track.getInfo();
+        this.player.startTrack(track,false);
+        event.getChannel().sendMessage("Now Playing " + trackInfo.title + " by " + trackInfo.author).queue();
     }
 
     //pause track

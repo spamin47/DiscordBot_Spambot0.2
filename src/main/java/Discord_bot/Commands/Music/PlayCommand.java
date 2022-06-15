@@ -12,6 +12,10 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.function.Function;
 
 @SuppressWarnings("ConstantConditions")
@@ -21,9 +25,8 @@ public class PlayCommand implements Command {
 
     @Override
     public String getName() {
-        return "play";
+        return "p";
     }
-
 
     @Override
     public void handle(GuildMessageReceivedEvent event, String[] commandArgs) {
@@ -33,6 +36,7 @@ public class PlayCommand implements Command {
         final Member self = event.getGuild().getSelfMember();
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
+        //if bot is not in VC then join VC
         if(!selfVoiceState.inVoiceChannel()){
             JoinCommand JC = new JoinCommand();
             JC.handle(event,commandArgs);
@@ -44,14 +48,38 @@ public class PlayCommand implements Command {
             textChannel.sendMessage("Need to be in VC!").queue();
             return;
         }
-        try{
-            System.out.println("link: " + commandArgs[1]);
 
-            PlayerManager.getInstance(event).loadAndPlay(textChannel,commandArgs[1]);
-            //PlayerManager.getInstance().
+        String link = commandArgs[1];
+        try{
+            System.out.println("link: " + link);
+
+            if(!isUrl(link)){
+                System.out.println("not a url link");
+                link = "ytsearch:";
+                //concatenate array of strings into one link
+                for(int i = 1; i<commandArgs.length;i++){
+                    System.out.println("Link: " + link);
+                    link+=commandArgs[i];
+                }
+            }
+            PlayerManager.getInstance(event).LoadAndPlay(textChannel,link);
         }catch(Exception e){
             e.printStackTrace();
         }
 
+    }
+
+    //check if the string is an URL
+    private boolean isUrl(String link) {
+        try{
+            URL url = new URL(link);
+            url.toURI();
+            System.out.println("succeeded in making url");
+            return true;
+        }catch(URISyntaxException e){
+            return false;
+        }catch (MalformedURLException e){
+            return false;
+        }
     }
 }

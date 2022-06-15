@@ -14,6 +14,7 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PlayerManager {
@@ -49,7 +50,7 @@ public class PlayerManager {
         });
     }
 
-    public void loadAndPlay(TextChannel channel, String trackUrl){
+    public void LoadAndPlay(TextChannel channel, String trackUrl){
         final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
@@ -66,7 +67,46 @@ public class PlayerManager {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
+                //get list of tracks
+                final List<AudioTrack> tracks = playlist.getTracks();
+                AudioTrack track = tracks.get(0);
+                channel.sendMessage("Adding track to queue: ")
+                        .append(track.getInfo().title)
+                        .append("' by '")
+                        .append(track.getInfo().author)
+                        .queue();
+                musicManager.scheduler.queue(track);
 
+            }
+            @Override
+            public void noMatches() {
+            }
+            @Override
+            public void loadFailed(FriendlyException exception) {
+
+            }
+        });
+    }
+    public void LoadAndPlayPlaylist(TextChannel channel, String trackUrl){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+
+        this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
+            @Override
+            public void trackLoaded(AudioTrack track) {
+            }
+
+            @Override
+            public void playlistLoaded(AudioPlaylist playlist) {
+                //get list of tracks
+                final List<AudioTrack> tracks = playlist.getTracks();
+                channel.sendMessage(String.valueOf(tracks.size()))
+                        .append(" tracks from playlist ")
+                        .append(playlist.getName())
+                        .queue();
+                //queue in all the tracks from playlist
+                for(AudioTrack track:tracks){
+                    musicManager.scheduler.queue(track);
+                }
             }
 
             @Override
@@ -106,6 +146,7 @@ public class PlayerManager {
             }
         });
     }
+
 
 
     //pause track

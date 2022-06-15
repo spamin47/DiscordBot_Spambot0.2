@@ -22,8 +22,8 @@ public class StopCommand implements Command {
         final GuildVoiceState selfVoiceState = self.getVoiceState();
 
         if(!selfVoiceState.inVoiceChannel()){
-            JoinCommand JC = new JoinCommand();
-            JC.handle(event,commandArgs);
+            textChannel.sendMessage("Need to be in VC!").queue();
+            return;
         }
         final Member member = event.getMember();
         final GuildVoiceState memberVoiceState = member.getVoiceState();
