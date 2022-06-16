@@ -24,16 +24,15 @@ public class CommandListener extends ListenerAdapter {
         }
 
     }
-    //log out message
+    //log out message of member
     public static void logMessage(GuildMessageReceivedEvent event){
 
         String[] args = event.getMessage().getContentRaw().split(" ");
 
-        System.out.println("User: " + event.getMember());
-        System.out.println("User Effective name: " + event.getMember().getEffectiveName());
-        System.out.println("User id: " + event.getMember().getId());
-        System.out.println("\nRaw Content: \n" + event.getMessage());
-        System.out.println("input:");
+        System.out.println("User Effective name: " + event.getMember().getEffectiveName() +
+                "(" +event.getMember().getId() +")");
+        //System.out.println("\nRaw Content: \n" + event.getMessage());
+        System.out.println("Message:");
         //print out string array
         int size = args.length;
         for(int i = 0;i<size;i++){

@@ -5,13 +5,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
-
-import javax.swing.*;
 import java.awt.*;
+import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -41,7 +39,7 @@ public class TrackScheduler extends AudioEventAdapter{
             printQueue();
         }else{
             //create embed
-            setUpdateEmbed(track);
+            setUpdateEmbed_CurrentlyPlaying(track);
             printQueue();
         }
     }
@@ -58,7 +56,7 @@ public class TrackScheduler extends AudioEventAdapter{
         this.player.startTrack(track,false);
 
         //create embed
-        setUpdateEmbed(track);
+        setUpdateEmbed_CurrentlyPlaying(track);
         printQueue();
 
     }
@@ -89,8 +87,12 @@ public class TrackScheduler extends AudioEventAdapter{
         printQueue();
     }
 
-    public void test(){
+    //show queue
+    public void showQueue(){
+        event.getChannel().sendMessage(setUpdateEmbed_Queue()).queue();
+    }
 
+    public void test(){
     }
 
     @Override
@@ -112,13 +114,45 @@ public class TrackScheduler extends AudioEventAdapter{
             System.out.println(track.getInfo().title);
         }
     }
-    public void setUpdateEmbed(AudioTrack track){
+
+    //set up embedded for queue
+    public MessageEmbed setUpdateEmbed_Queue(){
+        EmbedBuilder queueEmbed = new EmbedBuilder();
+        String queueSongs = "```";
+        queueEmbed.setColor(new Color(0x327da8));
+        queueEmbed.setTitle("Queue");
+        //get the top 10 songs in queue
+        int i = 0;
+        for(AudioTrack track: queue){
+            if(i==10){
+                break;
+            }
+            AudioTrackInfo trackInfo = track.getInfo();
+            queueSongs+=convertMilliSecToTime(trackInfo.length) + " " + trackInfo.title+"\n";
+            i++;
+        }
+        queueSongs+="```"; //put description in discord block format
+        queueEmbed.setDescription(queueSongs);
+        return queueEmbed.build();
+    }
+
+    //set up embedded for currently playing song
+    public void setUpdateEmbed_CurrentlyPlaying(AudioTrack track){
         AudioTrackInfo trackInfo = track.getInfo();
         embed.setTitle("**"+"Currently Playing:"+"**");
-        embed.setDescription("```"+trackInfo.title+"```\n"+
+        embed.setDescription("```" +convertMilliSecToTime(trackInfo.length)+
+                " " +trackInfo.title+"```\n"+
                 "_" +trackInfo.author+"_\n"+
                 "<" +trackInfo.uri+">");
         event.getChannel().sendMessage(embed.build()).queue();
+    }
+
+    //get time(String) from milliSeconds
+    public String convertMilliSecToTime(Long milliSeconds){
+        return Duration.ofMillis(milliSeconds).toString()
+                .replace('M',':')
+                .replaceAll("PT","")
+                .replace('S',' ');
     }
 
 }

@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,8 +43,7 @@ public class PlayerManager {
 
     public GuildMusicManager getMusicManager(Guild guild){
         return this.musicManagers.computeIfAbsent(guild.getIdLong(), (guildId) -> {
-
-           final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager,event);
+            GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager,event);
 
            guild.getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
             return guildMusicManager;
@@ -51,7 +51,7 @@ public class PlayerManager {
     }
 
     public void LoadAndPlay(TextChannel channel, String trackUrl){
-        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
@@ -121,6 +121,7 @@ public class PlayerManager {
         });
     }
 
+    //force play a track
     public void loadAndPlay2(VoiceChannel channel, String trackUrl){
         final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
@@ -177,6 +178,12 @@ public class PlayerManager {
     public void clearQueue(TextChannel channel) {
         final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
         musicManager.scheduler.clearQueue();
+    }
+
+    //Show queue
+    public void showQueue(TextChannel channel){
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.showQueue();
     }
 
     public static PlayerManager getInstance(GuildMessageReceivedEvent event) throws Exception{

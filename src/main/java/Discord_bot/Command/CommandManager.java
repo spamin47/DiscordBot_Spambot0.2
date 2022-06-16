@@ -25,6 +25,7 @@ public class CommandManager {
         commands.add(new DisconnectCommand());
         commands.add(new ClearCommand());
         commands.add(new PlayPlaylistCommand());
+        commands.add(new ShowQueueCommand());
     }
 
     public void handle(GuildMessageReceivedEvent event, String prefix){

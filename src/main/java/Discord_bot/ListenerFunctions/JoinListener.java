@@ -27,13 +27,15 @@ public class JoinListener extends ListenerAdapter {
     }
     //Log members who joined
     public static void logMember(GuildVoiceJoinEvent event){
-        System.out.println(event.toString());
-        System.out.println("User joined: " + event.getMember());
-        System.out.println("User Effective name: " + event.getMember().getEffectiveName());
-        System.out.println("User id: " + event.getMember().getId());
+        //log user joined
+        System.out.println(event.getMember().getEffectiveName() +
+                "(" +event.getMember().getId() +")" +
+                " joined " +
+                event.getChannelJoined().getName());
+
 
         if(event.getMember().getId().toString().equals("147920540168880128")){
-            System.out.println("the lord has join");
+            System.out.println("The lord has joined.");
 
             EntranceCommand entranceCommand = new EntranceCommand();
             entranceCommand.handle(event);
