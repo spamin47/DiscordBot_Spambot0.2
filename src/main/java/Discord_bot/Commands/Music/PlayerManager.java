@@ -1,5 +1,7 @@
 package Discord_bot.Commands.Music;
 
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.Equalizer;
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
@@ -23,15 +25,13 @@ public class PlayerManager {
 
     private final Map<Long, GuildMusicManager> musicManagers;
     private AudioPlayerManager audioPlayerManager = null;
-    private GuildMessageReceivedEvent event;
+    private final GuildMessageReceivedEvent event;
 
     public PlayerManager(GuildMessageReceivedEvent event) throws Exception{
         this.musicManagers = new HashMap<>();
         this.event = event;
         try{
-            System.out.println("Creating audioPlayerManager...");
             this.audioPlayerManager = new DefaultAudioPlayerManager();
-            System.out.println("Finished creation...");
         }catch(Exception e){
             e.printStackTrace();
             System.out.println("Cannot declare audioPlayerManager");
@@ -43,13 +43,15 @@ public class PlayerManager {
 
     public GuildMusicManager getMusicManager(Guild guild){
         return this.musicManagers.computeIfAbsent(guild.getIdLong(), (guildId) -> {
-            GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager,event);
+            final GuildMusicManager guildMusicManager = new GuildMusicManager(this.audioPlayerManager,event);
 
            guild.getAudioManager().setSendingHandler(guildMusicManager.getSendHandler());
             return guildMusicManager;
         });
     }
 
+    //Commands
+    //Load and play track
     public void LoadAndPlay(TextChannel channel, String trackUrl){
         GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
@@ -88,7 +90,7 @@ public class PlayerManager {
         });
     }
     public void LoadAndPlayPlaylist(TextChannel channel, String trackUrl){
-        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
@@ -121,9 +123,9 @@ public class PlayerManager {
         });
     }
 
-    //force play a track
+    //Force play a track
     public void loadAndPlay2(VoiceChannel channel, String trackUrl){
-        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
 
         this.audioPlayerManager.loadItemOrdered(musicManager, trackUrl, new AudioLoadResultHandler() {
             @Override
@@ -147,8 +149,6 @@ public class PlayerManager {
             }
         });
     }
-
-
 
     //pause track
     public void pauseMusic(TextChannel channel){
@@ -186,12 +186,36 @@ public class PlayerManager {
         musicManager.scheduler.showQueue();
     }
 
-    public static PlayerManager getInstance(GuildMessageReceivedEvent event) throws Exception{
+    //equalizer settings
+    public void setEqualizer(float []eq,TextChannel channel){
+        System.out.println("Calling setEqualizer in PlayerManager");
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.setEqualizer(eq);
+    }
+    public void resetEqualizer(TextChannel channel){
+        System.out.println("Calling setEqualizer in PlayerManager");
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.resetEqualizer();
+    }
+    public void showEqualizer(TextChannel channel){
+        System.out.println("Calling showEqualizer in PlayerManager");
+        final GuildMusicManager musicManager = this.getMusicManager(channel.getGuild());
+        musicManager.scheduler.displayEqualizer();
+    }
 
+    public String getGuildName(){
+        return event.getGuild().getName();
+    }
+
+    public static PlayerManager getInstance(GuildMessageReceivedEvent event) throws Exception{
         if(INSTANCE == null){
+            System.out.println("PlayerManager is null. Creating new PlayerManager...");
             INSTANCE = new PlayerManager(event);
         }
-
+        else if(!INSTANCE.getGuildName().equals(event.getGuild().getName())){ //if Bot is in a different server, then create new PlayerManager
+            System.out.println("In different server. Creating new PlayerManager...");
+            INSTANCE = new PlayerManager(event);
+        }
         return INSTANCE;
     }
 

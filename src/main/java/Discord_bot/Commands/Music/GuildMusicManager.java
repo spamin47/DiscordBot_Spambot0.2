@@ -10,6 +10,7 @@ public class GuildMusicManager {
     private final AudioPlayerSendHandler sendHandler;
 
     public GuildMusicManager(AudioPlayerManager manager, GuildMessageReceivedEvent event){
+        manager.getConfiguration().setFilterHotSwapEnabled(true);
         this.audioPlayer = manager.createPlayer();
         this.scheduler = new TrackScheduler(this.audioPlayer,event);
         this.audioPlayer.addListener(this.scheduler);

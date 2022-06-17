@@ -18,8 +18,6 @@ public class ClearCommand implements Command {
 
         System.out.println("Handling " + getName() + " command...");
         final TextChannel textChannel = event.getChannel();
-
-
         final Member member = event.getMember();
         final GuildVoiceState memberVoiceState = member.getVoiceState();
 

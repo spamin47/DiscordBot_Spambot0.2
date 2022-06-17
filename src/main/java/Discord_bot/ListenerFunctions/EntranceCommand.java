@@ -28,16 +28,16 @@ public class EntranceCommand implements IListener {
         final GuildVoiceState selfVoiceState = self.getVoiceState();
         final AudioManager audioManager = event.getGuild().getAudioManager();
 
-        if(!selfVoiceState.inVoiceChannel()){ //if bot is not in VC then join
-            final VoiceChannel memberChannel = event.getChannelJoined(); //get voice channel
-            audioManager.openAudioConnection(memberChannel); //join channel
-        }
-
-        try{
-            PlayerManager.getInstance(CommandListener.event).loadAndPlay2(event.getChannelJoined(),"https://youtu.be/ryDk5r-nNjY");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+//        if(!selfVoiceState.inVoiceChannel()){ //if bot is not in VC then join
+//            final VoiceChannel memberChannel = event.getChannelJoined(); //get voice channel
+//            audioManager.openAudioConnection(memberChannel); //join channel
+//        }
+//
+//        try{
+//            PlayerManager.getInstance(CommandListener.event).loadAndPlay2(event.getChannelJoined(),"https://youtu.be/ryDk5r-nNjY");
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
 
 
     }

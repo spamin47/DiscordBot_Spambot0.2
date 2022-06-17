@@ -29,15 +29,13 @@ public class CommandListener extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split(" ");
 
-        System.out.println("User Effective name: " + event.getMember().getEffectiveName() +
-                "(" +event.getMember().getId() +")");
-        //System.out.println("\nRaw Content: \n" + event.getMessage());
-        System.out.println("Message:");
+        System.out.println("\nUser: " + event.getMember().getEffectiveName() +
+                " (" +event.getMember().getId() +") from " + event.getGuild().getName() + " messaged in " + event.getChannel().getName() + ":");
         //print out string array
         int size = args.length;
         for(int i = 0;i<size;i++){
             System.out.print(args[i] + " ");
         }
-        System.out.println("");
+        System.out.println("\n");
     }
 }

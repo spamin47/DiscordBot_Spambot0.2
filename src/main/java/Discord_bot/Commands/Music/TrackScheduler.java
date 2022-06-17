@@ -1,4 +1,5 @@
 package Discord_bot.Commands.Music;
+import com.sedmelluq.discord.lavaplayer.filter.equalizer.EqualizerFactory;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -20,16 +21,19 @@ public class TrackScheduler extends AudioEventAdapter{
     private final GuildMessageReceivedEvent event;
     private final EmbedBuilder embed;
     private MessageEmbed builtEmbed;
+    private final EqualizerFactory equalizer;
 
     public TrackScheduler(AudioPlayer player, GuildMessageReceivedEvent event){
         this.event = event;
         this.player = player;
-        this.queue = new LinkedBlockingQueue<>();
-        this.embed = new EmbedBuilder();
+        this.queue = new LinkedBlockingQueue<>(); //Queue for storing tracks
+        this.equalizer = new EqualizerFactory(); //For configuring equalizer
+        this.embed = new EmbedBuilder(); //For displaying messages
         embed.setColor(new Color(0x327da8));
         embed.setThumbnail("https://i.pinimg.com/originals/a0/f7/5e/a0f75e40bc09ad8850447362d2e1756d.jpg");
         builtEmbed = embed.build();
-
+        this.player.setFilterFactory(this.equalizer);
+        this.player.setFrameBufferDuration(500);
     }
 
     //queue track
@@ -92,17 +96,50 @@ public class TrackScheduler extends AudioEventAdapter{
         event.getChannel().sendMessage(setUpdateEmbed_Queue()).queue();
     }
 
+    //change the equalizer of the player
+    public void setEqualizer(float []eq){
+        for(int i = 0;i<eq.length;i++){
+            if(eq[i]!=0){
+                this.equalizer.setGain(i,eq[i]);
+            }
+        }
+        displayEqualizer();
+    }
+
+    //change the equalizer of the player
+    public void resetEqualizer(){
+        for(int i = 0;i<15;i++){
+                this.equalizer.setGain(i,0);
+        }
+        displayEqualizer();
+    }
+    //show equalizer values in embedded form
+    public void displayEqualizer(){
+        EmbedBuilder eqEmbed = new EmbedBuilder();
+        String block = "```";
+        eqEmbed.setColor(new Color(0x327da8));
+        eqEmbed.setTitle("Equalizer");
+        //get the 15 gains from equalizer
+        for(int i =0;i<15;i++){
+            block+= equalizer.getGain(i) + "|";
+        }
+        block += "```";
+        eqEmbed.setDescription(block);
+        event.getChannel().sendMessage(eqEmbed.build()).queue();
+    }
+
     public void test(){
     }
 
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+        System.out.print("OnTrackEnd called");
         if(endReason.mayStartNext){
             System.out.println("Next Track: " + track.getInfo().title);
             nextTrack();
         }
-        if(queue.isEmpty() && this.player.getPlayingTrack()==null){ //if track queue is empty, then disconnect the bot from Voice Channel
-            System.out.println("Disconnecting...");
+        if(queue.isEmpty() && this.player.getPlayingTrack()==null && !player.isPaused()){ //if track queue is empty, then disconnect the bot from Voice Channel
+            System.out.println("Disconnecting from " + event.getChannel().getName());
             AudioManager audioManager = event.getGuild().getAudioManager();
             audioManager.closeAudioConnection();
         }

@@ -3,6 +3,7 @@ package Discord_bot.Command;
 import Discord_bot.Commands.DisconnectCommand;
 import Discord_bot.Commands.GreetingCommand;
 import Discord_bot.Commands.Music.*;
+import Discord_bot.Commands.Music.Equalizer.SetEqualizerCommand;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class CommandManager {
         commands.add(new ClearCommand());
         commands.add(new PlayPlaylistCommand());
         commands.add(new ShowQueueCommand());
+        commands.add(new SetEqualizerCommand());
     }
 
     public void handle(GuildMessageReceivedEvent event, String prefix){

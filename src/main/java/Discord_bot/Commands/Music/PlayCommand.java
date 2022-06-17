@@ -51,17 +51,16 @@ public class PlayCommand implements Command {
 
         String link = commandArgs[1];
         try{
-            System.out.println("link: " + link);
-
+            //System.out.println("link: " + link);
             if(!isUrl(link)){
-                System.out.println("not a url link");
+                System.out.println("Not a url link.");
                 link = "ytsearch:";
                 //concatenate array of strings into one link
                 for(int i = 1; i<commandArgs.length;i++){
-                    System.out.println("Link: " + link);
                     link+=commandArgs[i];
                 }
             }
+            System.out.println("SERVER: " + event.getGuild().getName() +". Initiate PlayCommand");
             PlayerManager.getInstance(event).LoadAndPlay(textChannel,link);
         }catch(Exception e){
             e.printStackTrace();
